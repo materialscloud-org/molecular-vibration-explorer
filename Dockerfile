@@ -1,17 +1,10 @@
 # Base Python image
 FROM python:3.7.10-slim
 
-# System-level dependencies
+# libX render required for RDkit vis
 RUN apt-get update && apt-get install -y \
     build-essential \
-    git \
-    curl \
-    libgl1 \
     libxrender1 \
-    libxext6 \
-    libsm6 \
-    nodejs \
-    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -21,14 +14,9 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Install node + npm for nglview widgets
-RUN apt-get update && apt-get install -y nodejs npm && \
-    jupyter-nbextension enable --py --sys-prefix nglview && \
-    jupyter-nbextension enable --py --sys-prefix widgetsnbextension
-
-# Copy app code into image
+    # Copy app code into image
 COPY . .
 
 # Expose port
